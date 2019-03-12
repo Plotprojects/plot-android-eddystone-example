@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">eddystoneexample</string>
+    <string name="only_when_in_foreground">This example project only searches for Eddystone when the app is in the foreground, press the search button to start.</string>
+</resources>
