@@ -6,4 +6,7 @@ This project exemplifies how to use the Plot External Region Trigger feature usi
 2. Set your credentials in the plotconfig.json file. 
 3. Edit the Eddystone namespace set in the MainActivity.java to match yours.
 4. Build and run the app.
-5. Press the search button to start listening for Eddystone beacons nearby.
+
+### Note
+This example project actively searches for beacons both while on foreground and background. For testing purposes, you can press
+the search button to force a beacon search.
