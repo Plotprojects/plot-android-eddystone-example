@@ -1,5 +1,7 @@
 package com.plotprojects.eddystoneexample;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,19 +10,12 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.messages.EddystoneUid;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageFilter;
 import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.gms.nearby.messages.Strategy;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
 import com.plotprojects.retail.android.Plot;
-import com.plotprojects.retail.android.TriggerType;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,11 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
         Plot.init(this);
 
+        subscribeBackground();
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                subscribe();
+                subscribeForeground();
                 Snackbar.make(view, "Searching for Eddystone", Snackbar.LENGTH_LONG)
                         .show();
             }
@@ -52,37 +49,21 @@ public class MainActivity extends AppCompatActivity {
         return new MessageListener() {
             @Override
             public void onFound(Message message) {
-                EddystoneUid eddystoneUid = EddystoneUid.from(message);
-                String eddystoneInstance = eddystoneUid.getInstance();
-                Log.i(TAG, "entered Eddystone instance " + eddystoneInstance + " of namespace " + eddystoneUid.getNamespace());
-
-                Map<String,String> uidProperty = new HashMap<>();
-                uidProperty.put("uid", eddystoneInstance);
-                Collection<Map<String, String>> allProperties = new ArrayList<>();
-                allProperties.add(uidProperty);
-                Plot.externalRegionTrigger(allProperties, TriggerType.ENTER);
+                EddystoneHelper.beaconEntered(TAG,message);
             }
 
             @Override
             public void onLost(Message message) {
-                EddystoneUid eddystoneUid = EddystoneUid.from(message);
-                String eddystoneInstance = eddystoneUid.getInstance();
-                Log.i(TAG, "exited Eddystone instance " + eddystoneInstance + " of namespace " + eddystoneUid.getNamespace());
-
-                Map<String,String> uidProperty = new HashMap<>();
-                uidProperty.put("uid", eddystoneInstance);
-                Collection<Map<String, String>> allProperties = new ArrayList<>();
-                allProperties.add(uidProperty);
-                Plot.externalRegionTrigger(allProperties, TriggerType.EXIT);
+                EddystoneHelper.beaconExited(TAG, message);
             }
         };
     }
 
-    private void subscribe() {
+    private void subscribeForeground() {
         Log.i(TAG, "Subscribing.");
         MessageFilter.Builder messageFilterBuilder = new MessageFilter.Builder();
         MessageFilter messageFilter = messageFilterBuilder.
-                includeEddystoneUids(EDDYSTONE_NAMESPACE,null) // subscribe to namespace
+                includeEddystoneUids(EDDYSTONE_NAMESPACE,null) // subscribeForeground to namespace
                 .build();
         SubscribeOptions options = new SubscribeOptions.Builder()
                 .setStrategy(Strategy.BLE_ONLY)
@@ -90,4 +71,24 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Nearby.getMessagesClient(this).subscribe(mMessageListener, options);
     }
+
+    // Subscribe to messages in the background.
+    private void subscribeBackground() {
+        Log.i(TAG, "Subscribing for background updates.");
+        MessageFilter.Builder messageFilterBuilder = new MessageFilter.Builder();
+        MessageFilter messageFilter = messageFilterBuilder.
+                includeEddystoneUids(EDDYSTONE_NAMESPACE,null) // subscribeForeground to namespace
+                .build();
+        SubscribeOptions options = new SubscribeOptions.Builder()
+                .setStrategy(Strategy.BLE_ONLY)
+                .setFilter(messageFilter)
+                .build();
+        Nearby.getMessagesClient(this).subscribe(getPendingIntent(), options);
+    }
+
+    private PendingIntent getPendingIntent() {
+        return PendingIntent.getBroadcast(this, 0, new Intent(this, BeaconMessageReceiver.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
 }
