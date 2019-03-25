@@ -1,5 +1,7 @@
 # Plot External Region Trigger example with Eddystone Beacons
-This project exemplifies how to use the Plot External Region Trigger feature using Eddystone beacons.
+This project exemplifies how to use the Plot External Region Trigger feature using Eddystone beacons. In this example, we did all the required steps from the plugin integration guide. If you want to know more about the Plot Projects plugin, go to [the Plot Projects website](https://www.plotprojects.com).
+
+This guide assumes you have access to [our dashboard](https://admin.plotprojects.com/) and you have a public token. Otherwise, [contact sales](https://content.plotprojects.com/schedule-demo/) for a demo and more information. More information about integrating the Plot Plugin into your Android app is in the [integration section of our documentation](https://www.plotprojects.com/documentation/#android_integrate).
 
 ## How to use
 1. Set your Eddystone Beacon(s) in the Plot Projects Dashboard.
@@ -10,3 +12,15 @@ This project exemplifies how to use the Plot External Region Trigger feature usi
 ### Note
 This example project actively searches for beacons both while on foreground and background. For testing purposes, you can press
 the search button to force a beacon search.
+
+# Plot Projects Flutter Example
+
+This example shows a Plot Projects integration into Flutter.
+
+
+## Links
+
+* [Plot Projects website](https://www.plotprojects.com)
+* [Plugin Documentation](https://www.plotprojects.com/documentation)
+* [Schedule a demo](https://content.plotprojects.com/schedule-demo/)
+* [Eddystone](https://developers.google.com/beacons/)
