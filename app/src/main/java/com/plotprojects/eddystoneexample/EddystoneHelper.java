@@ -30,7 +30,7 @@ public class EddystoneHelper {
 
     private static Collection<Map<String,String>> setupProperties(String eddystoneInstance){
         Map<String,String> uidProperty = new HashMap<>();
-        uidProperty.put("uid", eddystoneInstance);
+        uidProperty.put("id", eddystoneInstance);
         Collection<Map<String, String>> allProperties = new ArrayList<>();
         allProperties.add(uidProperty);
         return allProperties;
