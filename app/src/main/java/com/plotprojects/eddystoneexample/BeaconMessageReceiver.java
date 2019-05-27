@@ -7,22 +7,23 @@ import android.content.Intent;
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageListener;
+import com.google.android.gms.nearby.messages.MessagesOptions;
+import com.google.android.gms.nearby.messages.NearbyPermissions;
 
 public class BeaconMessageReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "BeaconMessageReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        Nearby.getMessagesClient(context).handleIntent(intent, new MessageListener() {
+        MessagesOptions messagesOptions = new MessagesOptions.Builder().setPermissions(NearbyPermissions.BLE).build();
+        Nearby.getMessagesClient(context,messagesOptions).handleIntent(intent, new MessageListener() {
             @Override
             public void onFound(Message message) {
-                EddystoneHelper.beaconEntered(TAG,message);
+                EddystoneHelper.beaconEntered(message);
             }
 
             @Override
             public void onLost(Message message) {
-                EddystoneHelper.beaconExited(TAG,message);
+                EddystoneHelper.beaconExited(message);
             }
         });
     }
